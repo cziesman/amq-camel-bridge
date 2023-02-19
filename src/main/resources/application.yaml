@@ -1,0 +1,41 @@
+# connection properties for an amq broker
+amq:
+  scheme: amqp
+  host: 127.0.0.1
+  port: 5672
+  username: admin
+  password: admin
+  maxConnections: 24
+  destination:
+    produce: NYSE::nyse.amq
+    consume: NYSE::nyse.mq
+
+# connection properties for an mq broker
+mq:
+  scheme: amqp
+  host: 10.0.1.101
+  port: 5672
+  username: admin
+  password: admin
+  maxConnections: 24
+  destination:
+    produce: NYSE::nyse.mq
+    consume: NYSE::nyse.amq
+
+# connection properties for the camel bridge
+camel:
+  destination:
+    in:
+      amq: jms:NYSE::nyse.amq?connectionFactory=#amqCachingConnectionFactory
+      mq: amqp:NYSE::nyse.mq?connectionFactory=#mqCachingConnectionFactory
+    out:
+      amq: amqp:NYSE::nyse.mq?connectionFactory=#amqCachingConnectionFactory
+      mq: jms:NYSE::nyse.amq?connectionFactory=#mqCachingConnectionFactory
+  springboot:
+    # set this to 'true' to enable detailed camel tracing
+    tracing: false
+
+server:
+  # the port for the web UI, i.e. http://localhost:8888
+  port: 8888
+
